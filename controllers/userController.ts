@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import prisma from "../utils/prisma";
 import bcrypt from "bcryptjs";
+import generateToken from "../utils/generateToken";
 
 // @Desc Register User
 // @Route /api/user/register
@@ -27,4 +28,36 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   });
 
   res.status(201).json(user);
+});
+
+// @Desc Login User
+// @Route /api/user/login
+// @Method POST
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user) {
+    res.status(401);
+    throw new Error("User not found");
+  }
+
+  const passwordMatching = bcrypt.compareSync(password, user.password);
+
+  if (user && !passwordMatching) {
+    res.status(401);
+    throw new Error("Password incorrect");
+  }
+
+  const userLogin = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    resume: user.resume,
+    isAdmin: user.isAdmin,
+    token: generateToken(user.id),
+  };
+
+  res.status(201).json(userLogin);
 });
