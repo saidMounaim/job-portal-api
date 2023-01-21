@@ -9,3 +9,31 @@ datasource db {
   provider = "sqlite"
   url      = "file:./db.db"
 }
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  resume    String?
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+}
+
+model Job {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  email         String
+  address       String
+  salaryRange   Int
+  noOfPositions Int
+  company       String
+  types         String
+  education     String
+  industry      String
+  experience    String
+  createdAt     DateTime @default(now()) @map(name: "created_at")
+  updatedAt     DateTime @updatedAt @map(name: "updated_at")
+}
