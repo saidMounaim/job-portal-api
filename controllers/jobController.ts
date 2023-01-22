@@ -21,3 +21,24 @@ export const createJob = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(201).json(job);
 });
+
+// @Desc Update Job
+// @Route /api/job/:jobId
+// @Method PUT
+export const updateJob = asyncHandler(async (req: Request, res: Response) => {
+  const { jobId } = req.params;
+
+  let job = await prisma.job.findUnique({ where: { id: jobId } });
+
+  if (!job) {
+    res.status(401);
+    throw new Error("Job not found");
+  }
+
+  job = await prisma.job.update({
+    where: { id: jobId },
+    data: req.body,
+  });
+
+  res.status(201).json(job);
+});
