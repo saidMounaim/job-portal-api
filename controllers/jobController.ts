@@ -42,3 +42,21 @@ export const updateJob = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(201).json(job);
 });
+
+// @Desc Delete Job
+// @Route /api/job/:jobId
+// @Method DELETE
+export const deleteJob = asyncHandler(async (req: Request, res: Response) => {
+  const { jobId } = req.params;
+
+  const job = await prisma.job.findUnique({ where: { id: jobId } });
+
+  if (!job) {
+    res.status(401);
+    throw new Error("Job not found");
+  }
+
+  await prisma.job.delete({ where: { id: jobId } });
+
+  res.status(201).json({ message: "Job successfully deleted" });
+});
