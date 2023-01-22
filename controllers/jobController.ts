@@ -10,3 +10,14 @@ export const getJobs = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(201).json(jobs);
 });
+
+// @Desc Create Job
+// @Route /api/job
+// @Method POST
+export const createJob = asyncHandler(async (req: Request, res: Response) => {
+  const job = await prisma.job.create({
+    data: req.body,
+  });
+
+  res.status(201).json(job);
+});

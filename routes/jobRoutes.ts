@@ -1,8 +1,8 @@
 import express from "express";
-import { getJobs } from "../controllers/jobController";
+import { getJobs, createJob } from "../controllers/jobController";
 
 const router = express.Router();
 
-router.route("/").get(getJobs);
+router.route("/").get(getJobs).post(createJob);
 
 export default router;
