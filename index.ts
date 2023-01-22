@@ -11,10 +11,10 @@ const app = express();
 app.use(express.json());
 
 // User Route
-app.use("/api/user", userRoutes);
+app.use("/api/users", userRoutes);
 
 // Job Route
-app.use("/api/job", jobRoutes);
+app.use("/api/jobs", jobRoutes);
 
 // Error Middleware
 app.use(notFound);
