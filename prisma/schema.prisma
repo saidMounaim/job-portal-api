@@ -11,14 +11,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  resume    String?
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now()) @map(name: "created_at")
-  updatedAt DateTime @updatedAt @map(name: "updated_at")
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  password    String
+  resume      String?
+  isAdmin     Boolean  @default(false)
+  appliedJobs Application[]
+  jobs        Job[]
+  createdAt   DateTime @default(now()) @map(name: "created_at")
+  updatedAt   DateTime @updatedAt @map(name: "updated_at")
 }
 
 model Job {
@@ -34,6 +36,19 @@ model Job {
   education     String
   industry      String
   experience    String
+  appliedJobs   Application[]
+  user          User?     @relation(fields: [userId], references: [id])
+  userId        String?
   createdAt     DateTime @default(now()) @map(name: "created_at")
   updatedAt     DateTime @updatedAt @map(name: "updated_at")
+}
+
+model Application {
+  id        String    @id @default(cuid())
+  user      User?     @relation(fields: [userId], references: [id])
+  userId    String?
+  job       Job?      @relation(fields: [jobId], references: [id])
+  jobId     String?
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @updatedAt @map(name: "updated_at")
 }
