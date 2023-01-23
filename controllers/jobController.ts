@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import prisma from "../utils/prisma";
+import { IUserRequest } from "../middlewares/auth";
 
 // @Desc Get Jobs
 // @Route /api/job
@@ -78,3 +79,41 @@ export const deleteJob = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(201).json({ message: "Job successfully deleted" });
 });
+
+// @Desc Apply For a Job
+// @Route /api/jobs/:jobId/apply
+// @Method POST
+export const applyJob = asyncHandler(
+  async (req: IUserRequest, res: Response) => {
+    const { jobId } = req.params;
+    const userId = req.user.id;
+
+    const jobExist = await prisma.job.findUnique({ where: { id: jobId } });
+
+    if (!jobExist) {
+      res.status(401);
+      throw new Error("Job not found");
+    }
+
+    const checkApply = await prisma.application.findMany({
+      where: {
+        userId,
+        jobId,
+      },
+    });
+
+    if (checkApply.length > 0) {
+      res.status(401);
+      throw new Error("Already Applied");
+    }
+
+    const app = await prisma.application.create({
+      data: {
+        userId,
+        jobId,
+      },
+    });
+
+    res.status(201).json(app);
+  }
+);
